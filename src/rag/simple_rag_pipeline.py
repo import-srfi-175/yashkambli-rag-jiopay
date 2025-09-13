@@ -57,16 +57,20 @@ class SimplifiedRAGPipeline:
     def _initialize_llm(self):
         """Initialize Gemini Pro model."""
         try:
-            api_key = os.getenv("GOOGLE_API_KEY") or settings.google_api_key
+            api_key = os.getenv("GOOGLE_API_KEY")
+            print(f"Attempting to initialize LLM. Found API key: {api_key is not None}")
             if api_key:
                 genai.configure(api_key=api_key)
                 self.llm_model = genai.GenerativeModel('gemini-1.5-flash')
                 logger.info("✅ Gemini 1.5 Flash model initialized")
+                print("LLM initialized successfully.")
             else:
-                logger.warning("Google API key not configured, using mock responses")
+                logger.warning("Google API key not found, using mock responses")
+                print("Google API key not found, using mock responses.")
                 self.llm_model = None
         except Exception as e:
             logger.error(f"Failed to initialize Gemini Pro: {e}")
+            print(f"Error initializing LLM: {e}")
             self.llm_model = None
     
     def _initialize_vector_manager(self):
