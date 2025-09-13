@@ -57,8 +57,9 @@ class SimplifiedRAGPipeline:
     def _initialize_llm(self):
         """Initialize Gemini Pro model."""
         try:
-            if settings.google_api_key and settings.google_api_key != "your_google_api_key_here":
-                genai.configure(api_key=settings.google_api_key)
+            api_key = os.getenv("GOOGLE_API_KEY") or settings.google_api_key
+            if api_key:
+                genai.configure(api_key=api_key)
                 self.llm_model = genai.GenerativeModel('gemini-1.5-flash')
                 logger.info("✅ Gemini 1.5 Flash model initialized")
             else:
@@ -165,17 +166,23 @@ class SimplifiedRAGPipeline:
                     history_text += f"{msg['role']}: {msg['content']}\n"
             
             # Create prompt
-            prompt = f"""You are a helpful JioPay customer support assistant. Answer the user's question based on the provided context.
+            prompt = f"""You are a helpful JioPay customer support assistant. Your task is to synthesize the information from the provided context to answer the user's question.
 
 Context Information:
+---
 {context}
+---
 
 Previous Conversation:
 {history_text}
 
 User Question: {query}
 
-Please provide a helpful, accurate answer based on the context. If the context doesn't contain enough information, say so politely and suggest what additional information might be helpful.
+Instructions:
+1.  Read the context and the user's question carefully.
+2.  Formulate a concise and helpful answer that directly addresses the user's question.
+3.  Do NOT quote the context directly. Summarize the information in your own words.
+4.  If the context does not contain the answer, state that you couldn't find the information and, if possible, suggest what the user should look for.
 
 Answer:"""
             
