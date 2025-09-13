@@ -11,7 +11,7 @@ app_file: src/web/streamlit_app.py
 
 # JioPay RAG Chatbot
 
-A production-grade Retrieval-Augmented Generation (RAG) chatbot for JioPay customer support automation.
+This RAG chatbot for JioPay customer support automation was completed as a project for the LLM Production and Deployment course by Vizuara
 
 ## 🚀 Local Setup
 
